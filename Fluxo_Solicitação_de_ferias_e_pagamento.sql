@@ -1,0 +1,275 @@
+CREATE TABLE Funcionarios (
+    funcionario_id INT PRIMARY KEY,
+    nome VARCHAR(255),
+    departamento VARCHAR(255),
+    cargo VARCHAR(255),
+    data_admissao DATE
+);
+
+CREATE TABLE SolicitacoesFerias (
+    solicitacao_id INT PRIMARY KEY,
+    funcionario_id INT,
+    data_inicio DATE,
+    data_fim DATE,
+    dias_solicitados INT,
+    status VARCHAR(50), -- Ex: "Pendente", "Aprovado", "Negado", "Pago"
+    data_solicitacao DATE,
+    data_aprovacao DATE,
+    observacoes TEXT,
+    FOREIGN KEY (funcionario_id) REFERENCES Funcionarios(funcionario_id)
+);
+
+CREATE TABLE Aprovacoes (
+    aprovacao_id INT PRIMARY KEY,
+    solicitacao_id INT,
+    aprovador_id INT,
+    data_aprovacao DATE,
+    status VARCHAR(50), -- Ex: "Aprovado", "Negado"
+    observacoes TEXT,
+    FOREIGN KEY (solicitacao_id) REFERENCES SolicitacoesFerias(solicitacao_id),
+    FOREIGN KEY (aprovador_id) REFERENCES Funcionarios(funcionario_id)
+);
+
+CREATE TABLE Pagamentos (
+    pagamento_id INT PRIMARY KEY,
+    solicitacao_id INT,
+    valor_pago DECIMAL(10, 2),
+    data_pagamento DATE,
+    metodo_pagamento VARCHAR(50),
+    FOREIGN KEY (solicitacao_id) REFERENCES SolicitacoesFerias(solicitacao_id)
+);
+
+CREATE VIEW vw_dias_ferias_funcionario AS
+SELECT
+    f.funcionario_id,
+    f.nome,
+    SUM(sf.dias_solicitados) AS total_dias_ferias
+FROM
+    Funcionarios f
+JOIN
+    SolicitacoesFerias sf ON f.funcionario_id = sf.funcionario_id
+WHERE
+    sf.status = 'Aprovado'  -- ou 'Pago', dependendo da necessidade
+GROUP BY
+    f.funcionario_id, f.nome; 
+--Inserir Dados na Tabela Funcionarios
+-- Inserir Funcionários
+-- Inserir Detalhes dos Funcionários
+INSERT INTO Funcionarios(funcionario_id, nome, departamento, cargo, data_admissao) VALUES
+(1, 'João Silva', 'TI', 'Desenvolvedor', '2020-01-15'),
+(2, 'Maria Oliveira', 'RH', 'Analista de RH', '2018-03-22'),
+(3, 'Carlos Souza', 'Financeiro', 'Assistente Financeiro', '2021-06-10'),
+(4, 'Ana Santos', 'Marketing', 'Gerente de Marketing', '2017-08-25'),
+(5, 'Paulo Pereira', 'TI', 'Analista de Sistemas', '2019-02-05'),
+(6, 'Fernanda Costa', 'Financeiro', 'Contadora', '2020-05-30'),
+(7, 'Lucas Almeida', 'RH', 'Coordenador de RH', '2022-07-13'),
+(8, 'Juliana Lima', 'TI', 'DBA', '2015-04-01'),
+(9, 'Roberto Silva', 'Financeiro', 'Tesoureiro', '2016-09-15'),
+(10, 'Tatiane Souza', 'Marketing', 'Assistente de Marketing', '2019-11-03'),
+(11, 'Mariana Costa', 'TI', 'Desenvolvedora', '2021-03-12'),
+(12, 'Felipe Martins', 'RH', 'Assistente de RH', '2020-06-08'),
+(13, 'Amanda Oliveira', 'Financeiro', 'Analista de Contabilidade', '2017-11-05'),
+(14, 'Ricardo Pereira', 'Marketing', 'Coordenador de Marketing', '2019-06-23'),
+(15, 'Gabriel Ferreira', 'TI', 'Analista de Redes', '2018-01-19'),
+(16, 'Larissa Lima', 'Financeiro', 'Assistente de Tesouraria', '2019-09-10'),
+(17, 'Vinícius Souza', 'RH', 'Gerente de RH', '2016-02-12'),
+(18, 'Sofia Alves', 'TI', 'Programadora', '2020-11-08'),
+(19, 'Beatriz Silva', 'Financeiro', 'Analista de Controladoria', '2022-04-02'),
+(20, 'Eduardo Lima', 'Marketing', 'Designer Gráfico', '2020-12-19'),
+(21, 'Lucas Souza', 'TI', 'Suporte Técnico', '2021-07-25'),
+(22, 'Paula Costa', 'Financeiro', 'Assistente de Controladoria', '2020-03-14'),
+(23, 'Carlos Oliveira', 'RH', 'Assistente de Departamento Pessoal', '2018-09-05'),
+(24, 'Marcos Santos', 'TI', 'Analista de Infraestrutura', '2021-11-30'),
+(25, 'Juliana Oliveira', 'Marketing', 'Coordenadora de Social Media', '2019-02-14'),
+(26, 'André Almeida', 'Financeiro', 'Analista de Orçamento', '2022-02-25'),
+(27, 'Natália Souza', 'TI', 'Gerente de TI', '2018-07-22'),
+(28, 'Ricardo Almeida', 'RH', 'Analista de Benefícios', '2021-01-16'),
+(29, 'Fernanda Silva', 'Financeiro', 'Auditor Interno', '2022-06-02'),
+(30, 'Daniel Costa', 'TI', 'Suporte de TI', '2020-03-19'),
+(31, 'Cláudia Lima', 'Marketing', 'Assistente de Comunicação', '2021-05-03'),
+(32, 'Roberta Souza', 'Financeiro', 'Analista de Finanças', '2017-10-18'),
+(33, 'Gustavo Costa', 'RH', 'Assistente de Recrutamento', '2019-08-25'),
+(34, 'Felipe Lima', 'TI', 'Desenvolvedor Front-End', '2020-05-16'),
+(35, 'Patrícia Souza', 'Financeiro', 'Assistente de Investimentos', '2021-01-12'),
+(36, 'Carlos Lima', 'RH', 'Coordenador de Recrutamento', '2022-08-22'),
+(37, 'Adriana Costa', 'TI', 'Desenvolvedora Full Stack', '2021-06-01'),
+(38, 'Robson Pereira', 'Financeiro', 'Analista de Custos', '2019-04-20'),
+(39, 'Luana Oliveira', 'Marketing', 'Assistente de Eventos', '2018-11-14'),
+(40, 'Juliano Silva', 'TI', 'Analista de Banco de Dados', '2020-10-25'),
+(41, 'Carla Santos', 'Financeiro', 'Analista de Riscos', '2021-02-22'),
+(42, 'Nathália Lima', 'RH', 'Gerente de Recrutamento', '2020-06-25'),
+(43, 'Paulo Oliveira', 'TI', 'Analista de Testes', '2017-09-04'),
+(44, 'Tatiane Costa', 'Financeiro', 'Analista de Contas a Pagar', '2021-07-11'),
+(45, 'Aline Souza', 'Marketing', 'Assistente de Publicidade', '2022-01-14'),
+(46, 'Matheus Pereira', 'TI', 'Analista de Segurança da Informação', '2021-05-21'),
+(47, 'César Oliveira', 'Financeiro', 'Consultor Financeiro', '2020-09-03'),
+(48, 'Sérgio Costa', 'RH', 'Assistente de Treinamento', '2019-02-19'),
+(49, 'Vanessa Lima', 'TI', 'Gerente de Infraestrutura', '2018-08-05'),
+(50, 'Marcelo Silva', 'Marketing', 'Coordenador de Publicidade', '2022-03-17');
+
+-- Inserir Solicitações de Férias
+INSERT INTO SolicitacoesFerias (solicitacao_id, funcionario_id, data_inicio, data_fim, dias_solicitados, status, data_solicitacao, data_aprovacao, observacoes) VALUES
+(1, 1, '2023-06-01', '2023-06-15', 10, 'Aprovado', '2023-05-10', '2023-05-12', 'Férias de inverno'),
+(2, 2, '2023-07-01', '2023-07-10', 10, 'Aprovado', '2023-06-20', '2023-06-22', 'Férias planejadas'),
+(3, 3, '2023-08-05', '2023-08-19', 15, 'Aprovado', '2023-07-01', '2023-07-03', 'Férias de verão'),
+(4, 4, '2023-09-10', '2023-09-24', 12, 'Aprovado', '2023-08-25', '2023-08-27', 'Férias no final do ano'),
+(5, 5, '2023-10-01', '2023-10-15', 10, 'Aprovado', '2023-09-05', '2023-09-07', 'Férias após projeto'),
+(6, 6, '2023-05-01', '2023-05-10', 8, 'Aprovado', '2023-04-20', '2023-04-22', 'Férias pessoais'),
+(7, 7, '2023-11-01', '2023-11-14', 10, 'Aprovado', '2023-10-10', '2023-10-12', 'Férias programadas'),
+(8, 8, '2023-12-01', '2023-12-14', 10, 'Aprovado', '2023-11-05', '2023-11-08', 'Férias em dezembro'),
+(9, 9, '2023-07-01', '2023-07-15', 10, 'Aprovado', '2023-06-15', '2023-06-18', 'Férias de meio de ano'),
+(10, 10, '2023-06-10', '2023-06-24', 10, 'Aprovado', '2023-05-25', '2023-05-27', 'Férias em junho'),
+(11, 11, '2023-06-01', '2023-06-15', 10, 'Aprovado', '2023-05-05', '2023-05-08', 'Férias de inverno'),
+(12, 12, '2023-07-05', '2023-07-20', 12, 'Aprovado', '2023-06-25', '2023-06-28', 'Férias de verão'),
+(13, 13, '2023-08-10', '2023-08-25', 15, 'Aprovado', '2023-07-10', '2023-07-12', 'Férias planejadas'),
+(14, 14, '2023-09-15', '2023-09-30', 12, 'Aprovado', '2023-08-30', '2023-09-02', 'Férias de fim de ano'),
+(15, 15, '2023-10-05', '2023-10-20', 10, 'Aprovado', '2023-09-10', '2023-09-12', 'Férias pós-projeto'),
+(16, 16, '2023-05-15', '2023-05-25', 8, 'Aprovado', '2023-04-28', '2023-05-01', 'Férias pessoais'),
+(17, 17, '2023-11-10', '2023-11-25', 10, 'Aprovado', '2023-10-12', '2023-10-15', 'Férias programadas'),
+(18, 18, '2023-12-05', '2023-12-19', 10, 'Aprovado', '2023-11-10', '2023-11-12', 'Férias no final do ano'),
+(19, 19, '2023-07-10', '2023-07-20', 10, 'Aprovado', '2023-06-22', '2023-06-25', 'Férias de meio de ano'),
+(20, 20, '2023-06-05', '2023-06-19', 10, 'Aprovado', '2023-05-28', '2023-05-30', 'Férias de junho'),
+(21, 21, '2023-06-02', '2023-06-16', 10, 'Aprovado', '2023-05-12', '2023-05-15', 'Férias de inverno'),
+(22, 22, '2023-07-10', '2023-07-20', 10, 'Aprovado', '2023-06-22', '2023-06-25', 'Férias planejadas'),
+(23, 23, '2023-08-01', '2023-08-15', 10, 'Aprovado', '2023-07-05', '2023-07-08', 'Férias de verão'),
+(24, 24, '2023-09-05', '2023-09-20', 12, 'Aprovado', '2023-08-15', '2023-08-17', 'Férias no final do ano'),
+(25, 25, '2023-10-10', '2023-10-25', 10, 'Aprovado', '2023-09-12', '2023-09-14', 'Férias após projeto'),
+(26, 26, '2023-05-10', '2023-05-20', 10, 'Aprovado', '2023-04-30', '2023-05-02', 'Férias pessoais'),
+(27, 27, '2023-11-15', '2023-11-30', 10, 'Aprovado', '2023-10-18', '2023-10-20', 'Férias programadas'),
+(28, 28, '2023-12-10', '2023-12-24', 10, 'Aprovado', '2023-11-15', '2023-11-18', 'Férias em dezembro'),
+(29, 29, '2023-07-05', '2023-07-15', 10, 'Aprovado', '2023-06-20', '2023-06-23', 'Férias de meio de ano'),
+(30, 30, '2023-06-20', '2023-07-05', 10, 'Aprovado', '2023-06-10', '2023-06-12', 'Férias de verão'),
+(31, 31, '2023-06-15', '2023-06-29', 10, 'Aprovado', '2023-05-30', '2023-06-02', 'Férias de inverno'),
+(32, 32, '2023-07-01', '2023-07-10', 10, 'Aprovado', '2023-06-15', '2023-06-18', 'Férias planejadas'),
+(33, 33, '2023-08-05', '2023-08-15', 10, 'Aprovado', '2023-07-01', '2023-07-03', 'Férias de verão'),
+(34, 34, '2023-09-10', '2023-09-24', 12, 'Aprovado', '2023-08-25', '2023-08-27', 'Férias no final do ano'),
+(35, 35, '2023-10-05', '2023-10-15', 10, 'Aprovado', '2023-09-07', '2023-09-10', 'Férias após projeto'),
+(36, 36, '2023-05-01', '2023-05-10', 8, 'Aprovado', '2023-04-20', '2023-04-22', 'Férias pessoais'),
+(37, 37, '2023-11-05', '2023-11-15', 10, 'Aprovado', '2023-10-12', '2023-10-15', 'Férias programadas'),
+(38, 38, '2023-12-01', '2023-12-15', 10, 'Aprovado', '2023-11-10', '2023-11-13', 'Férias em dezembro'),
+(39, 39, '2023-07-05', '2023-07-15', 10, 'Aprovado', '2023-06-22', '2023-06-25', 'Férias de meio de ano'),
+(40, 40, '2023-06-15', '2023-06-30', 10, 'Aprovado', '2023-06-05', '2023-06-07', 'Férias em junho'),
+(41, 41, '2023-06-10', '2023-06-20', 10, 'Aprovado', '2023-05-20', '2023-05-22', 'Férias de inverno'),
+(42, 42, '2023-07-01', '2023-07-15', 10, 'Aprovado', '2023-06-15', '2023-06-17', 'Férias planejadas'),
+(43, 43, '2023-08-01', '2023-08-15', 10, 'Aprovado', '2023-07-01', '2023-07-03', 'Férias de verão'),
+(44, 44, '2023-09-10', '2023-09-20', 10, 'Aprovado', '2023-08-15', '2023-08-18', 'Férias no final do ano'),
+(45, 45, '2023-10-10', '2023-10-20', 10, 'Aprovado', '2023-09-12', '2023-09-15', 'Férias após projeto'),
+(46, 46, '2023-05-05', '2023-05-15', 10, 'Aprovado', '2023-04-28', '2023-05-01', 'Férias pessoais'),
+(47, 47, '2023-11-10', '2023-11-20', 10, 'Aprovado', '2023-10-15', '2023-10-17', 'Férias programadas'),
+(48, 48, '2023-12-01', '2023-12-15', 10, 'Aprovado', '2023-11-05', '2023-11-08', 'Férias no final do ano'),
+(49, 49, '2023-07-10', '2023-07-20', 10, 'Aprovado', '2023-06-30', '2023-07-02', 'Férias de meio de ano'),
+(50, 50, '2023-06-10', '2023-06-20', 10, 'Aprovado', '2023-05-25', '2023-05-28', 'Férias de junho');
+
+-- Inserir Aprovações
+INSERT INTO Aprovacoes (aprovacao_id, solicitacao_id, aprovador_id, data_aprovacao, status, observacoes) VALUES
+(1, 1, 4, '2023-05-12', 'Aprovado', 'Aprovado sem alterações'),
+(2, 2, 6, '2023-06-22', 'Aprovado', 'Férias em período tranquilo'),
+(3, 3, 5, '2023-07-03', 'Aprovado', 'Aprovado, sem restrições'),
+(4, 4, 7, '2023-08-27', 'Aprovado', 'Férias de final de ano'),
+(5, 5, 3, '2023-09-07', 'Aprovado', 'Férias após finalização de projeto'),
+(6, 6, 8, '2023-04-22', 'Aprovado', 'Férias curtas, aprovadas rapidamente'),
+(7, 7, 9, '2023-10-12', 'Aprovado', 'Férias agendadas com antecedência'),
+(8, 8, 10, '2023-11-08', 'Aprovado', 'Férias previstas para o fim de ano'),
+(9, 9, 4, '2023-06-18', 'Aprovado', 'Férias no meio do ano'),
+(10, 10, 6, '2023-05-27', 'Aprovado', 'Férias no período de férias escolares'),
+(11, 11, 5, '2023-05-10', 'Aprovado', 'Férias de inverno, sem ajustes'),
+(12, 12, 6, '2023-06-15', 'Aprovado', 'Férias de verão aprovadas'),
+(13, 13, 4, '2023-07-08', 'Aprovado', 'Férias após reunião de planejamento'),
+(14, 14, 8, '2023-08-20', 'Aprovado', 'Férias agendadas para o fim de ano'),
+(15, 15, 3, '2023-09-10', 'Aprovado', 'Férias sem objeções'),
+(16, 16, 9, '2023-04-18', 'Aprovado', 'Férias curtas de 8 dias'),
+(17, 17, 7, '2023-10-15', 'Aprovado', 'Férias programadas para o fim do semestre'),
+(18, 18, 10, '2023-11-05', 'Aprovado', 'Férias de final de ano confirmadas'),
+(19, 19, 2, '2023-07-01', 'Aprovado', 'Férias de meio de ano autorizadas'),
+(20, 20, 6, '2023-06-12', 'Aprovado', 'Férias de julho serão tomadas'),
+(21, 21, 3, '2023-06-20', 'Aprovado', 'Férias curtas em junho'),
+(22, 22, 8, '2023-07-02', 'Aprovado', 'Férias com excelente timing'),
+(23, 23, 9, '2023-08-01', 'Aprovado', 'Férias planejadas para o mês de agosto'),
+(24, 24, 5, '2023-09-10', 'Aprovado', 'Férias no período de setembro'),
+(25, 25, 7, '2023-10-05', 'Aprovado', 'Férias depois do grande evento'),
+(26, 26, 4, '2023-05-02', 'Aprovado', 'Férias de 10 dias para recuperação'),
+(27, 27, 3, '2023-11-07', 'Aprovado', 'Férias sem nenhuma objeção'),
+(28, 28, 6, '2023-12-01', 'Aprovado', 'Férias no mês de dezembro, confirmadas'),
+(29, 29, 8, '2023-07-15', 'Aprovado', 'Férias após férias escolares'),
+(30, 30, 2, '2023-06-22', 'Aprovado', 'Férias de meio de ano com aprovação antecipada'),
+(31, 31, 5, '2023-09-05', 'Aprovado', 'Férias para o período pós-evento'),
+(32, 32, 7, '2023-10-01', 'Aprovado', 'Férias agendadas para o fim de semana longo'),
+(33, 33, 9, '2023-08-15', 'Aprovado', 'Férias durante as festividades de verão'),
+(34, 34, 10, '2023-09-18', 'Aprovado', 'Férias durante o evento de outono'),
+(35, 35, 8, '2023-06-01', 'Aprovado', 'Férias de início de ano'),
+(36, 36, 6, '2023-10-20', 'Aprovado', 'Férias após evento programado'),
+(37, 37, 4, '2023-11-25', 'Aprovado', 'Férias de fim de ano aprovado'),
+(38, 38, 7, '2023-12-15', 'Aprovado', 'Férias confirmadas para dezembro'),
+(39, 39, 2, '2023-07-05', 'Aprovado', 'Férias de meio de ano sem impedimentos'),
+(40, 40, 10, '2023-06-12', 'Aprovado', 'Férias de inverno aprovadas'),
+(41, 41, 8, '2023-07-03', 'Aprovado', 'Férias durante o período de verão'),
+(42, 42, 9, '2023-08-20', 'Aprovado', 'Férias durante período favorável'),
+(43, 43, 3, '2023-09-15', 'Aprovado', 'Férias de final de ano com aprovação rápida'),
+(44, 44, 6, '2023-10-25', 'Aprovado', 'Férias depois de período de alta demanda'),
+(45, 45, 7, '2023-11-18', 'Aprovado', 'Férias previstas para final de novembro'),
+(46, 46, 9, '2023-12-10', 'Aprovado', 'Férias de fim de ano ajustadas'),
+(47, 47, 4, '2023-07-20', 'Aprovado', 'Férias de meio de ano planejadas'),
+(48, 48, 8, '2023-06-25', 'Aprovado', 'Férias confirmadas para junho'),
+(49, 49, 3, '2023-08-02', 'Aprovado', 'Férias durante o verão'),
+(50, 50, 6, '2023-09-05', 'Aprovado', 'Férias de outono autorizadas');
+
+-- Inserir Pagamentos
+INSERT INTO Pagamentos (pagamento_id, solicitacao_id, valor_pago, data_pagamento, metodo_pagamento) VALUES
+(1, 1, 3000.00, '2023-06-01', 'Transferência Bancária'),
+(2, 2, 2500.00, '2023-07-01', 'Transferência Bancária'),
+(3, 3, 4000.00, '2023-08-05', 'Cheque'),
+(4, 4, 3500.00, '2023-09-10', 'Transferência Bancária'),
+(5, 5, 2800.00, '2023-10-01', 'Transferência Bancária'),
+(6, 6, 2200.00, '2023-05-01', 'Dinheiro'),
+(7, 7, 3300.00, '2023-11-01', 'Transferência Bancária'),
+(8, 8, 3200.00, '2023-12-01', 'Cheque'),
+(9, 9, 2700.00, '2023-07-01', 'Transferência Bancária'),
+(10, 10, 3100.00, '2023-06-10', 'Transferência Bancária'),
+(11, 11, 3300.00, '2023-06-05', 'Transferência Bancária'),
+(12, 12, 3200.00, '2023-06-10', 'Cheque'),
+(13, 13, 4000.00, '2023-07-08', 'Transferência Bancária'),
+(14, 14, 3500.00, '2023-08-12', 'Cheque'),
+(15, 15, 2900.00, '2023-09-15', 'Transferência Bancária'),
+(16, 16, 2200.00, '2023-05-05', 'Dinheiro'),
+(17, 17, 3000.00, '2023-10-12', 'Transferência Bancária'),
+(18, 18, 3100.00, '2023-11-20', 'Transferência Bancária'),
+(19, 19, 2800.00, '2023-07-15', 'Cheque'),
+(20, 20, 3200.00, '2023-06-10', 'Transferência Bancária'),
+(21, 21, 3300.00, '2023-07-05', 'Cheque'),
+(22, 22, 3000.00, '2023-08-01', 'Transferência Bancária'),
+(23, 23, 3100.00, '2023-09-10', 'Dinheiro'),
+(24, 24, 2500.00, '2023-10-01', 'Transferência Bancária'),
+(25, 25, 2900.00, '2023-11-18', 'Cheque'),
+(26, 26, 2200.00, '2023-07-10', 'Dinheiro'),
+(27, 27, 3200.00, '2023-08-15', 'Transferência Bancária'),
+(28, 28, 3300.00, '2023-09-05', 'Cheque'),
+(29, 29, 3100.00, '2023-10-20', 'Transferência Bancária'),
+(30, 30, 3000.00, '2023-12-05', 'Cheque'),
+(31, 31, 3400.00, '2023-11-12', 'Transferência Bancária'),
+(32, 32, 2900.00, '2023-10-25', 'Cheque'),
+(33, 33, 2500.00, '2023-09-15', 'Transferência Bancária'),
+(34, 34, 2700.00, '2023-11-01', 'Dinheiro'),
+(35, 35, 3100.00, '2023-06-18', 'Transferência Bancária'),
+(36, 36, 3400.00, '2023-07-01', 'Cheque'),
+(37, 37, 2800.00, '2023-08-12', 'Transferência Bancária'),
+(38, 38, 3300.00, '2023-09-08', 'Cheque'),
+(39, 39, 3000.00, '2023-10-03', 'Transferência Bancária'),
+(40, 40, 3200.00, '2023-12-02', 'Cheque'),
+(41, 41, 2800.00, '2023-07-05', 'Transferência Bancária'),
+(42, 42, 3300.00, '2023-06-18', 'Dinheiro'),
+(43, 43, 3200.00, '2023-10-05', 'Cheque'),
+(44, 44, 3100.00, '2023-08-15', 'Transferência Bancária'),
+(45, 45, 2900.00, '2023-12-15', 'Cheque'),
+(46, 46, 3000.00, '2023-07-12', 'Transferência Bancária'),
+(47, 47, 3500.00, '2023-09-01', 'Transferência Bancária'),
+(48, 48, 3300.00, '2023-10-28', 'Cheque'),
+(49, 49, 3000.00, '2023-12-10', 'Transferência Bancária'),
+(50, 50, 2700.00, '2023-11-01', 'Transferência Bancária');
+
+-- Gerar Relatório
+SELECT * FROM Funcionarios a;
+select * from SolicitacoesFerias;
+select * from Aprovacoes;
+select * from Pagamentos;
+
+

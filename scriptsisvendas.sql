@@ -149,3 +149,26 @@ CREATE TRIGGER trigger_alteracao_preco
 AFTER UPDATE OF preco ON Produtos
 FOR EACH row 
 EXECUTE FUNCTION registrar_alteracao_preco();
+
+
+select * from LogPrecosProdutos;
+
+--Criar View Consulta pre pronta de categorização de dados
+create or replace view ProdutosPorCategoriaComContagemClientes as 
+select
+    c.nome as categoria,
+    p.nome as produto,
+    count(cp.cliente_id) as numero_de_clientes
+from
+    categorias c 
+join
+    produtos p on c.id = p.categoria_id 
+ left join 
+    clientes_produtos cp on p.id = cp.produto_id 
+group by 
+    c.nome, p.nome 
+order by 
+    c.nome, p.nome; 
+    
+   select * from ProdutosPorCategoriaComContagemClientes;
+   
